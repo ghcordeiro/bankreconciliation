@@ -1,14 +1,17 @@
+version: "3.8"
+
 services:
 
-  reconciliation_db:
-    image: postgres:15
-    container_name: reconciliation_db
+  postgres:
+    image: postgres:15-alpine
+    container_name: postgres
     restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: reconciliation_db
     ports:
       - "5432:5432"
-    environment:
-      POSTGRES_DB: "postgres"
-      POSTGRES_PASSWORD: "postgres"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./schema.sql:/docker-entrypoint-initdb.d/schema.sql
@@ -17,6 +20,8 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
+    networks:
+      - backend
 
   api:
     build:
@@ -25,12 +30,12 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      reconciliation_db:
+      postgres:
         condition: service_healthy
     environment:
-      DB_URL: r2dbc:postgresql://reconciliation_db:5432/reconciliation_db
-      DB_USERNAME: postgres
-      DB_PASSWORD: postgres
+      SPRING_R2DBC_URL: r2dbc:postgresql://postgres:5432/reconciliation_db
+      SPRING_R2DBC_USERNAME: postgres
+      SPRING_R2DBC_PASSWORD: postgres
     networks:
       - backend
 
@@ -39,12 +44,12 @@ services:
       context: ./reconciliation-worker
     container_name: reconciliation_worker
     depends_on:
-      reconciliation_db:
+      postgres:
         condition: service_healthy
     environment:
-      DB_URL: r2dbc:postgresql://reconciliation_db:5432/reconciliation_db
-      DB_USERNAME: postgres
-      DB_PASSWORD: postgres
+      SPRING_R2DBC_URL: r2dbc:postgresql://postgres:5432/reconciliation_db
+      SPRING_R2DBC_USERNAME: postgres
+      SPRING_R2DBC_PASSWORD: postgres
     networks:
       - backend
 

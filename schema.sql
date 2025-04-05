@@ -1,5 +1,3 @@
-CREATE DATABASE reconciliation_db;
-
 CREATE TABLE IF NOT EXISTS bank_transactions (
     id SERIAL PRIMARY KEY,
     date DATE,
