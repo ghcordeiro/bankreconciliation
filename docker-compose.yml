@@ -1,0 +1,56 @@
+services:
+
+  reconciliation_db:
+    image: postgres:15
+    container_name: reconciliation_db
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./schema.sql:/docker-entrypoint-initdb.d/schema.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: ./api
+    container_name: api
+    ports:
+      - "8080:8080"
+    depends_on:
+      reconciliation_db:
+        condition: service_healthy
+    environment:
+      DB_URL: r2dbc:postgresql://reconciliation_db:5432/reconciliation_db
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+    networks:
+      - backend
+
+  reconciliation-worker:
+    build:
+      context: ./reconciliation-worker
+    container_name: reconciliation_worker
+    depends_on:
+      reconciliation_db:
+        condition: service_healthy
+    environment:
+      DB_URL: r2dbc:postgresql://reconciliation_db:5432/reconciliation_db
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+    networks:
+      - backend
+
+volumes:
+  postgres_data:
+
+networks:
+  backend:
+    driver: bridge

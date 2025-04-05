@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: reconciliation-worker
+
+  r2dbc:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
+server:
+  port: 8081
