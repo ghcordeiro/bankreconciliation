@@ -54,12 +54,12 @@ docker-compose up --build
 
 **Exemplo via `curl`:**
 ```bash
-curl -F "file=@/caminho/do/arquivo.csv" http://localhost:8080/accounting-transactions/upload
+curl -F "file=@/caminho/do/arquivo.csv" http://localhost:8080/bank-transactions/upload
 ```
 
 ## Upload de Arquivos para transações contábeis
 
-**Endpoint:** `POST /bank-transactions/upload`
+**Endpoint:** `POST /accounting-transactions/upload`
 
 **Formato:**
 - Formulário `multipart/form-data`
@@ -70,14 +70,35 @@ curl -F "file=@/caminho/do/arquivo.csv" http://localhost:8080/accounting-transac
 curl -F "file=@/caminho/do/arquivo.csv" http://localhost:8080/accounting-transactions/upload
 ```
 
-## Testes
+## Como Executar os Testes
 
-### Unitários:
-- Cobrem serviços, controladores e produção de mensagens.
+O projeto possui **testes unitários e de integração** com suporte a **Testcontainers**, garantindo isolamento e reprodutibilidade dos testes com um banco PostgreSQL real.
 
-### Integração:
-- Testes com containers PostgreSQL usando Testcontainers.
+### Pré-requisitos
+
+- Java 21+
+- Docker instalado e rodando
+- Gradle (`./gradlew` incluso no projeto)
+
+### Executando todos os testes
+
+```bash
+./gradlew test
+```
+
+### O que os testes fazem?
+
+- **Testes unitários:** executam rápido, sem necessidade de infraestrutura.
+- **Testes de integração:**
+    - Usam `Testcontainers` para subir um PostgreSQL dinâmico.
+    - Inicializam o banco com um script (`schema-test.sql`).
+    - Testam endpoints reais, incluindo upload de arquivos e persistência.
+
+### Observações
+
+- Os testes de integração rodam no módulo `api`, usando a classe base `IntegrationTestBase`.
+- O Docker precisa estar rodando pois o `Testcontainers` depende dele para subir o PostgreSQL.
+- O container é iniciado automaticamente nos testes, sem necessidade de comandos extras.
 
 ## Contato
 Desenvolvido por [Guilherme Cordeiro](https://github.com/ghcordeiro) — entre em contato para dúvidas, sugestões ou colaborações.
-

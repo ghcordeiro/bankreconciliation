@@ -1,0 +1,10 @@
+spring:
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:schema-test.sql
+
+  r2dbc:
+    username: testuser
+    password: testpass
+    url: r2dbc:postgresql://localhost:5432/testdb
