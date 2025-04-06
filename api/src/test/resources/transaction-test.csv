@@ -1,0 +1,6 @@
+description,amount,date,type
+Pagamento fornecedor,1500.00,2025-03-01,DEBIT
+Recebimento cliente,2500.00,2025-03-02,CREDIT
+Tarifa bancária,25.00,2025-03-03,DEBIT
+Reembolso despesas,300.00,2025-03-04,CREDIT
+Pagamento folha,10000.00,2025-03-05,DEBIT

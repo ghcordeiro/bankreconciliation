@@ -1,5 +1,6 @@
 package br.dev.guilhermecordeiro.bankreconciliation.api.service.parser;
 
+import br.dev.guilhermecordeiro.bankreconciliation.api.domain.AccountingTransaction;
 import br.dev.guilhermecordeiro.bankreconciliation.api.domain.BankTransaction;
 import br.dev.guilhermecordeiro.bankreconciliation.api.enums.TransactionTypeEnum;
 import org.apache.commons.csv.CSVRecord;
@@ -10,11 +11,11 @@ import java.time.LocalDate;
 import java.util.function.Function;
 
 @Component
-class CsvAccountingTransactionFileParser extends AbstractCsvTransactionFileParser<BankTransaction> {
+class CsvAccountingTransactionFileParser extends AbstractCsvTransactionFileParser<AccountingTransaction> {
 
     @Override
-    protected Function<CSVRecord, BankTransaction> mapRecordToEntity() {
-        return record -> BankTransaction.builder()
+    protected Function<CSVRecord, AccountingTransaction> mapRecordToEntity() {
+        return record -> AccountingTransaction.builder()
                 .date(LocalDate.parse(record.get("date")))
                 .description(record.get("description"))
                 .amount(new BigDecimal(record.get("amount")))
